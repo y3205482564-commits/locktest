@@ -3,5 +3,6 @@
   <component name="VcsDirectoryMappings">
     <mapping directory="" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/lockdemo" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/yudao-ui-admin-uniapp-master" vcs="Git" />
   </component>
 </project>
