@@ -5,6 +5,12 @@
 			"style": {
 				"navigationBarTitleText": "uni-app"
 			}
+		},
+		{
+			"path": "pages/lock/blueLock",
+			"style": {
+				"navigationBarTitleText": "智能锁-开锁"
+			}
 		}
 	],
 	"globalStyle": {

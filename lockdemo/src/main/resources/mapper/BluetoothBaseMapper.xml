@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.iocoder.cloud.lockdemo.mapper.BluetoothBaseMapper">
+
+    <resultMap id="BaseResultMap" type="cn.iocoder.cloud.lockdemo.entity.BluetoothBase">
+            <id property="id" column="id" jdbcType="VARCHAR"/>
+            <result property="lockNum" column="lock_num" jdbcType="VARCHAR"/>
+            <result property="mac" column="mac" jdbcType="VARCHAR"/>
+            <result property="blueType" column="blue_type" jdbcType="VARCHAR"/>
+            <result property="password" column="password" jdbcType="VARCHAR"/>
+            <result property="secretKey" column="secret_key" jdbcType="VARCHAR"/>
+            <result property="useCount" column="use_count" jdbcType="INTEGER"/>
+            <result property="lastUser" column="last_user" jdbcType="VARCHAR"/>
+            <result property="lastUseTime" column="last_use_time" jdbcType="TIMESTAMP"/>
+            <result property="isInstructClosed" column="is_instruct_closed" jdbcType="VARCHAR"/>
+            <result property="answerQuestion" column="answer_question" jdbcType="VARCHAR"/>
+            <result property="electQuantity" column="elect_quantity" jdbcType="INTEGER"/>
+            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+            <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,lock_num,mac,
+        blue_type,password,secret_key,
+        use_count,last_user,last_use_time,
+        is_instruct_closed,answer_question,elect_quantity,
+        create_time,update_time
+    </sql>
+</mapper>
