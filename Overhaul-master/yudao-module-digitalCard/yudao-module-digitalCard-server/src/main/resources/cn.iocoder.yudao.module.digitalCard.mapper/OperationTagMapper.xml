@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.iocoder.yudao.module.digitalCard.mapper.OperationTagMapper">
+
+    <resultMap id="BaseResultMap" type="cn.iocoder.yudao.module.digitalCard.domain.OperationTag">
+            <id property="id" column="id" jdbcType="BIGINT"/>
+            <result property="tagType" column="tag_type" jdbcType="VARCHAR"/>
+            <result property="stationRoomId" column="station_room_id" jdbcType="BIGINT"/>
+            <result property="area" column="area" jdbcType="VARCHAR"/>
+            <result property="consoleNo" column="console_no" jdbcType="VARCHAR"/>
+            <result property="deviceLocation" column="device_location" jdbcType="VARCHAR"/>
+            <result property="belongUnit" column="belong_unit" jdbcType="VARCHAR"/>
+            <result property="workCount" column="work_count" jdbcType="INTEGER"/>
+            <result property="useUnit" column="use_unit" jdbcType="VARCHAR"/>
+            <result property="usePerson" column="use_person" jdbcType="VARCHAR"/>
+            <result property="inspector" column="inspector" jdbcType="VARCHAR"/>
+            <result property="operator" column="operator" jdbcType="VARCHAR"/>
+            <result property="useTime" column="use_time" jdbcType="TIMESTAMP"/>
+            <result property="creator" column="creator" jdbcType="VARCHAR"/>
+            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+            <result property="updater" column="updater" jdbcType="VARCHAR"/>
+            <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+            <result property="deleted" column="deleted" jdbcType="TINYINT"/>
+            <result property="tenantId" column="tenant_id" jdbcType="BIGINT"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,tag_type,area,
+        console_no,device_location,belong_unit,
+        work_count,use_unit,use_person,
+        inspector,operator,use_time,
+        creator,create_time,updater,
+        update_time,deleted,tenant_id
+    </sql>
+</mapper>

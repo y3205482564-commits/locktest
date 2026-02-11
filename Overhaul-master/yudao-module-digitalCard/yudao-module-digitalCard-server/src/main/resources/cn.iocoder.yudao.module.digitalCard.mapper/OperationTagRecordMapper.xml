@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.iocoder.yudao.module.digitalCard.mapper.OperationTagRecordMapper">
+
+    <resultMap id="BaseResultMap" type="cn.iocoder.yudao.module.digitalCard.domain.OperationTagRecord">
+            <id property="id" column="id" jdbcType="BIGINT"/>
+            <result property="tagId" column="tag_id" jdbcType="BIGINT"/>
+            <result property="stationRoomId" column="station_room_id" jdbcType="BIGINT"/>
+            <result property="useUnit" column="use_unit" jdbcType="VARCHAR"/>
+            <result property="usePerson" column="use_person" jdbcType="VARCHAR"/>
+            <result property="useInspector" column="use_inspector" jdbcType="VARCHAR"/>
+            <result property="useOperator" column="use_operator" jdbcType="VARCHAR"/>
+            <result property="useTime" column="use_time" jdbcType="TIMESTAMP"/>
+            <result property="returnPerson" column="return_person" jdbcType="VARCHAR"/>
+            <result property="returnInspector" column="return_inspector" jdbcType="VARCHAR"/>
+            <result property="returnOperator" column="return_operator" jdbcType="VARCHAR"/>
+            <result property="returnTime" column="return_time" jdbcType="TIMESTAMP"/>
+            <result property="status" column="status" jdbcType="TINYINT"/>
+            <result property="remark" column="remark" jdbcType="VARCHAR"/>
+            <result property="creator" column="creator" jdbcType="VARCHAR"/>
+            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+            <result property="updater" column="updater" jdbcType="VARCHAR"/>
+            <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+            <result property="deleted" column="deleted" jdbcType="BIT"/>
+            <result property="tenantId" column="tenant_id" jdbcType="BIGINT"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,tag_id,station_room_id,
+        use_unit,use_person,use_inspector,
+        use_operator,use_time,return_person,
+        return_inspector,return_operator,return_time,
+        status,remark,creator,
+        create_time,updater,update_time,
+        deleted,tenant_id
+    </sql>
+</mapper>
