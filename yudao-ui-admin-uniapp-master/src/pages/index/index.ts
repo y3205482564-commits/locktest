@@ -160,6 +160,19 @@ const menuGroupsData: MenuGroup[] = [
     ],
   },
   {
+    key: 'lock',
+    name: '智能锁',
+    menus: [
+      {
+        key: 'lockTest',
+        name: '智能锁测试',
+        icon: 'lock-on',
+        url: '/pages-lock/lock/blue-lock',
+        iconColor: '#1890ff',
+      },
+    ],
+  },
+  {
     key: 'infra',
     name: '基础设施',
     menus: [

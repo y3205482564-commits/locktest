@@ -77,6 +77,7 @@ export default defineConfig(({ command, mode }) => {
           'src/pages-system', // “系统管理”模块
           'src/pages-infra', // “基础设施”模块
           'src/pages-bpm', // “工作流程”模块
+          'src/pages-lock', // “智能锁”模块
         ],
         dts: 'src/types/uni-pages.d.ts',
       }),

@@ -1,5 +1,6 @@
 package cn.iocoder.yudao.module.digitalCard.domain;
 
+import cn.iocoder.yudao.framework.tenant.core.aop.TenantIgnore;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -12,6 +13,7 @@ import java.time.LocalDateTime;
  */
 @Data
 @TableName("use_records")
+@TenantIgnore
 public class UseRecords {
 
     /**
