@@ -31,18 +31,24 @@ const httpInterceptor = {
     }
     // 非 http 开头需拼接地址
     if (!options.url.startsWith('http')) {
+      let finalBaseUrl = baseUrl
+      // 开锁相关接口使用 /app-api 前缀（/digitalCard/bluetooth-base）
+      if (options.url.startsWith('/digitalCard/bluetooth-base')) {
+        finalBaseUrl = baseUrl.replace('/admin-api', '/app-api')
+      }
+
       // #ifdef H5
       if (JSON.parse(import.meta.env.VITE_APP_PROXY_ENABLE)) {
         // 自动拼接代理前缀
         options.url = import.meta.env.VITE_APP_PROXY_PREFIX + options.url
       }
       else {
-        options.url = baseUrl + options.url
+        options.url = finalBaseUrl + options.url
       }
       // #endif
-      // 非H5正常拼接
+      // 非H5正常拼接（手机端、小程序等）
       // #ifndef H5
-      options.url = baseUrl + options.url
+      options.url = finalBaseUrl + options.url
       // #endif
       // TIPS: 如果需要对接多个后端服务，也可以在这里处理，拼接成所需要的地址
     }

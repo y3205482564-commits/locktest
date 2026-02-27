@@ -1,5 +1,6 @@
 import { http } from '@/http/http'
 
+// 使用 /digitalCard/bluetooth-base，拦截器会根据此路径添加 /app-api 前缀
 const baseUrl = '/digitalCard/bluetooth-base'
 
 /** 蓝牙设备信息 */
