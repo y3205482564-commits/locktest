@@ -1,6 +1,5 @@
 package cn.iocoder.yudao.module.digitalCard;
 
-import com.anji.captcha.config.AjCaptchaServiceAutoConfiguration;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -9,7 +8,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  *
  * @author 系统管理
  */
-@SpringBootApplication(exclude = {AjCaptchaServiceAutoConfiguration.class})
+@SpringBootApplication
 public class DigitalCardServerApplication {
 
     public static void main(String[] args) {

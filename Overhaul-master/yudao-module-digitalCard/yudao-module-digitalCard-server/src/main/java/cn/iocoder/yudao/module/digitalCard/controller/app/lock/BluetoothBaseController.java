@@ -1,4 +1,4 @@
-package cn.iocoder.yudao.module.digitalCard.controller.admin.lock;
+package cn.iocoder.yudao.module.digitalCard.controller.app.lock;
 
 import cn.iocoder.yudao.framework.common.exception.enums.GlobalErrorCodeConstants;
 import cn.iocoder.yudao.framework.common.pojo.CommonResult;
@@ -18,7 +18,7 @@ import javax.validation.Valid;
 /**
  * 蓝牙设备控制器
  */
-@Tag(name = "管理后台 - 智能锁管理")
+@Tag(name = "用户 App - 智能锁管理")
 @RestController
 @RequestMapping("/digitalCard/bluetooth-base")
 @Validated
