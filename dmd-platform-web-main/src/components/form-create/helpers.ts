@@ -13,6 +13,7 @@ import {
   useUploadFileRule,
   useUploadImageRule,
   useUploadImagesRule,
+  useLockRule,
 } from './rules';
 import { apiSelectRule } from '@/components/form-create/rules/data';
 
@@ -214,6 +215,7 @@ export async function useFormCreateDesigner(designer: Ref) {
     props: [...apiSelectRule],
     event: ['click', 'change', 'visibleChange', 'clear', 'blur', 'focus'],
   });
+  const lockRule = useLockRule();
 
   /** 构建系统字段菜单 */
   function buildSystemMenu() {
@@ -227,6 +229,7 @@ export async function useFormCreateDesigner(designer: Ref) {
       deptSelectRule,
       dictSelectRule,
       apiSelectRule0,
+      lockRule,
     ];
     const menu: Menu = {
       name: 'system',

@@ -928,21 +928,35 @@ onLoad((option) => {
     eventChannel.value = (proxy as any).getOpenerEventChannel()
   }
   initValue()
+  
+  // 优先从直接参数获取 initLockId
   if (option && option.initLockId) {
     initLockId.value = option.initLockId as string
   }
-  if (option && option.toHome) {
-    toHome.value = true
-  }
-
+  
+  // 从 query string 中获取参数（兼容 URL 参数传递方式）
   if (option && option.q) {
     const query = decodeURIComponent(option.q as string)
     const queryParams = getParamsFromUrl(query)
     console.log(queryParams)
     const initLockIdParam = getQueryString(query, 'initLockId')
-    if (initLockIdParam) {
+    if (initLockIdParam && !initLockId.value) {
       initLockId.value = initLockIdParam
     }
+  }
+  
+  // 如果通过 URL 参数传递（非 query string），直接从 option 中获取
+  if (!initLockId.value && option) {
+    // 尝试从 option 的所有键中查找 initLockId
+    Object.keys(option).forEach((key) => {
+      if (key === 'initLockId' && option[key]) {
+        initLockId.value = option[key] as string
+      }
+    })
+  }
+  
+  if (option && option.toHome) {
+    toHome.value = true
   }
 })
 

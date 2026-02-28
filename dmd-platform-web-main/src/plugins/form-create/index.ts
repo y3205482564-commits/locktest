@@ -36,6 +36,7 @@ import {
 // ======================= 自定义组件 =======================
 import { useApiSelect } from '@/components/form-create';
 import DictSelect from '@/components/form-create/components/dict-select.vue';
+import LockButton from '@/components/form-create/components/lock-button.vue';
 import { useImagesUpload } from '@/components/form-create/components/use-images-upload';
 import { Tinymce } from '@/components/Tinymce';
 import { FileUpload, ImageUpload } from '@/components/upload2';
@@ -87,6 +88,7 @@ const components = [
   ApiSelect,
   ImagesUpload,
   DictSelect,
+  LockButton,
   Tinymce,
   ImageUpload,
   FileUpload,

@@ -155,6 +155,16 @@
                 <text class="upload-placeholder-text">点击上传图片</text>
               </view>
             </view>
+            <!-- 开锁组件 -->
+            <view v-else-if="isLockField(field)" class="form-field-value form-field-lock">
+              <wd-button
+                type="primary"
+                custom-style="width: 100%"
+                @click="handleLockOpen(field)"
+              >
+                {{ field.props?.buttonText || '扫码开锁' }}
+              </wd-button>
+            </view>
             <!-- 其他 -->
             <view v-else class="form-field-value">
               <wd-input
@@ -168,6 +178,19 @@
           <template v-else>
             <view v-if="isUploadImgField(field) && (formPreview.formData[field.prop] ?? field.value)" class="readonly-upload-img">
               <image :src="formPreview.formData[field.prop] ?? field.value" mode="aspectFit" class="preview-img" />
+            </view>
+            <view v-else-if="isLockField(field)" class="form-field-value form-field-lock">
+              <view v-if="formPreview.formData[field.prop]" class="text-26rpx text-[#666]">
+                {{ getFieldDisplayValue(field) }}
+              </view>
+              <wd-button
+                v-else
+                type="primary"
+                custom-style="width: 100%"
+                @click="handleLockOpen(field)"
+              >
+                {{ field.props?.buttonText || '扫码开锁' }}
+              </wd-button>
             </view>
             <view v-else class="text-26rpx text-[#666]">
               {{ getFieldDisplayValue(field) }}
@@ -199,6 +222,7 @@ import {
   isCheckboxField,
   isApiSelectField,
   isUploadImgField,
+  isLockField,
   getApiSelectType,
 } from '@/utils/formCreate'
 import { http } from '@/http/http'
@@ -276,6 +300,19 @@ function isEditable(field: any) {
 /** 只读时的展示值（必须用 .value 读取 ref 内的 formData，否则取不到已提交的表单数据） */
 function getFieldDisplayValue(field: any) {
   const val = formPreview.value.formData[field.prop] ?? field.value
+  
+  // 开锁组件特殊处理：显示开锁状态或锁ID
+  if (isLockField(field)) {
+    if (!val || val === '') {
+      return ''
+    }
+    // 如果值是锁ID格式（包含 blueLock 或纯ID），显示"已开锁"；否则显示原值
+    if (typeof val === 'string' && (val.includes('blueLock') || val.length > 10)) {
+      return '已开锁'
+    }
+    return val === '已开锁' ? '已开锁' : (val || '')
+  }
+  
   if (isApiSelectField(field)) {
     const opts = apiSelectOptions.value[field.prop] || field.options || []
     if (Array.isArray(val)) {
@@ -378,6 +415,77 @@ async function handleUploadImg(field: any) {
   }
 }
 
+/** 处理开锁按钮点击 */
+function handleLockOpen(field: any) {
+  if (!field?.prop) {
+    toast.show('字段配置错误')
+    return
+  }
+  
+  // 构建跳转参数
+  const params: Record<string, any> = {}
+  
+  // 传递字段信息，用于开锁页面识别
+  params.fieldProp = field.prop
+  
+  // 如果有初始锁ID（从表单数据中获取），可以传递
+  const currentLockId = formPreview.value.formData[field.prop]
+  if (currentLockId && typeof currentLockId === 'string' && currentLockId.trim()) {
+    // 如果当前值已经是锁ID格式（如 blueLock,xxx 或纯ID），直接传递
+    params.initLockId = currentLockId.trim()
+  }
+  
+  // 构建URL
+  let url = '/pages-lock/lock/blue-lock'
+  const query = Object.keys(params)
+    .map(key => `${key}=${encodeURIComponent(params[key])}`)
+    .join('&')
+  if (query) {
+    url += `?${query}`
+  }
+  
+  // 跳转到开锁页面，使用 eventChannel 监听事件
+  uni.navigateTo({
+    url,
+    events: {
+      // 监听开锁成功事件
+      blueLock: (data: any) => {
+        console.log('开锁成功回调', data)
+        // 更新表单数据
+        if (field.prop) {
+          // 优先使用返回的锁ID，其次使用传递的初始锁ID，最后使用"已开锁"状态
+          let lockResult: string
+          if (data?.data && typeof data.data === 'string') {
+            lockResult = data.data
+          } else if (data?.initLockId && typeof data.initLockId === 'string') {
+            lockResult = data.initLockId
+          } else if (currentLockId && typeof currentLockId === 'string') {
+            lockResult = currentLockId
+          } else {
+            // 根据配置决定保存什么：如果 saveLockInfo 为 true，保存锁ID；否则保存状态
+            const saveLockInfo = field.props?.saveLockInfo !== false
+            lockResult = saveLockInfo ? '已开锁' : '已开锁'
+          }
+          
+          formPreview.value.formData[field.prop] = lockResult
+          toast.show('开锁成功')
+        }
+      },
+      // 监听返回事件
+      back: () => {
+        console.log('从开锁页面返回')
+      }
+    },
+    success: () => {
+      console.log('跳转开锁页面成功')
+    },
+    fail: (err) => {
+      console.error('跳转开锁页面失败', err)
+      toast.show('跳转失败，请检查网络或重试')
+    }
+  })
+}
+
 /** 可编辑字段名列表（审批提交时只提交这些字段） */
 function getWritableFields(): string[] {
   return formPreview.value.rule
@@ -455,5 +563,8 @@ defineExpose({
   height: 200rpx;
   border-radius: 8rpx;
   background: #f5f5f5;
+}
+.form-field-lock {
+  padding: 12rpx 0;
 }
 </style>

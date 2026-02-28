@@ -4,3 +4,4 @@ export { useSelectRule } from './use-select-rule';
 export { useUploadFileRule } from './use-upload-file-rule';
 export { useUploadImageRule } from './use-upload-image-rule';
 export { useUploadImagesRule } from './use-upload-images-rule';
+export { useLockRule } from './use-lock-rule';

@@ -247,3 +247,11 @@ export function isUploadImgField(field: any) {
   const t = (field?.type ?? '').toLowerCase()
   return t === 'uploadimg' || t === 'upload-img' || t === 'el-uploadimg'
 }
+
+/** 开锁组件（LockButton） */
+export function isLockField(field: any) {
+  const t = (field?.type ?? '').toLowerCase()
+  // 支持多种类型变体：LockButton, lock-button, lockbutton 等（大小写不敏感）
+  // 注意：网页端使用 'LockButton' 作为 type，与组件 name 一致
+  return t === 'lockbutton' || t === 'lock-button' || t === 'lock_button'
+}
