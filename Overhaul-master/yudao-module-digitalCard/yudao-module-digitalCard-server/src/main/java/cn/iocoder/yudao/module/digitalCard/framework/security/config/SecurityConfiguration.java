@@ -1,8 +1,11 @@
 package cn.iocoder.yudao.module.digitalCard.framework.security.config;
 
 import cn.iocoder.yudao.framework.security.config.AuthorizeRequestsCustomizer;
+import cn.iocoder.yudao.module.digitalCard.framework.security.filter.AppApiUserTypeFilter;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AuthorizeHttpRequestsConfigurer;
 
@@ -35,6 +38,23 @@ public class SecurityConfiguration {
             }
 
         };
+    }
+
+    /**
+     * 注册 AppApiUserTypeFilter，确保在 Spring Security FilterChain 之前执行
+     * 用于修复 /app-api/digitalCard/** 路径的用户类型识别问题
+     * 
+     * 注意：使用负数 Order 确保在 Spring Security 的 DelegatingFilterProxy (Order=0) 之前执行
+     */
+    @Bean
+    public FilterRegistrationBean<AppApiUserTypeFilter> appApiUserTypeFilter() {
+        FilterRegistrationBean<AppApiUserTypeFilter> registration = new FilterRegistrationBean<>();
+        registration.setFilter(new AppApiUserTypeFilter());
+        registration.addUrlPatterns("/app-api/digitalCard/*", "/app-api/digitalCard/**"); // 支持多级路径
+        registration.setName("appApiUserTypeFilter");
+        // 使用负数确保在 Spring Security 的 DelegatingFilterProxy (Order=0) 之前执行
+        registration.setOrder(-100);
+        return registration;
     }
 
 }
