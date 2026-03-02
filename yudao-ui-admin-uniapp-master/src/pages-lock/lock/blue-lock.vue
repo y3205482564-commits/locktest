@@ -5,7 +5,9 @@
       <text class="lock-text" :class="isConnect ? 'text-green' : 'text-red'">{{ lockName }}</text>
       <view class="btn-box">
         <image mode="aspectFit" src="https://aq.sglototo.com/wechat/static/scan_lock.png" />
-        <view class="img-btn" @click="onScanLock">扫 码</view>
+        <view class="img-btn" @click="onScanLock">
+          扫 码
+        </view>
       </view>
     </view>
     <view class="lock-content lock-style">
@@ -13,7 +15,9 @@
       <text class="lock-text" :class="isConnect ? 'text-green' : 'text-red'">{{ lockStatus }}</text>
       <view class="btn-box">
         <image mode="aspectFit" src="https://aq.sglototo.com/wechat/static/lock_close.png" />
-        <view class="img-btn" @click="onLockClose">断 开</view>
+        <view class="img-btn" @click="onLockClose">
+          断 开
+        </view>
       </view>
     </view>
     <view class="lock-content lock-style">
@@ -21,7 +25,9 @@
       <text class="lock-text" :class="isConnect ? 'text-green' : 'text-red'">{{ lockPower }}</text>
       <view class="btn-box">
         <image mode="aspectFit" src="https://aq.sglototo.com/wechat/static/battery_unknown.png" />
-        <view class="img-btn" @click="onLockPower">获 取</view>
+        <view class="img-btn" @click="onLockPower">
+          获 取
+        </view>
       </view>
     </view>
     <view class="lock-content lock-style">
@@ -38,21 +44,25 @@
     </view>
 
     <view class="lock-open">
-      <view class="btn open" @click="onLockOpen()">开 锁</view>
-      <view v-if="isInstructClosed" class="btn close" @click="onCloseLock()">关 锁</view>
+      <view class="btn open" @click="onLockOpen()">
+        开 锁
+      </view>
+      <view v-if="isInstructClosed" class="btn close" @click="onCloseLock()">
+        关 锁
+      </view>
     </view>
   </view>
 </template>
 
 <script setup lang="ts">
-import { ref, getCurrentInstance } from 'vue'
-import { onShow, onLoad, onUnload } from '@dcloudio/uni-app'
-import { encrypts, decrypts } from '@/utils/lock/crypto'
-import { getBluetoothBaseInfo, addUseRecords, updateElectQuantity } from '@/api/lock/bluetooth-base'
+import { onLoad, onShow, onUnload } from '@dcloudio/uni-app'
+import { getCurrentInstance, ref } from 'vue'
+import { addUseRecords, getBluetoothBaseInfo, updateElectQuantity } from '@/api/lock/bluetooth-base'
 import { useUserStore } from '@/store'
-import redUtil from '@/utils/lock/util'
-import { getQueryString, getParamsFromUrl } from '@/utils/lock'
+import { getParamsFromUrl, getQueryString } from '@/utils/lock'
 import * as redAes from '@/utils/lock/aes/entry-export_all'
+import { decrypts, encrypts } from '@/utils/lock/crypto'
+import redUtil from '@/utils/lock/util'
 
 const { proxy } = getCurrentInstance()
 const userStore = useUserStore()
@@ -115,8 +125,7 @@ function getMacPath(buffer: ArrayBuffer) {
   let mac: string
   if (blueType.value === '0' || blueType.value === '3') {
     mac = hexArr.slice(2, 8).join(':')
-  }
-  else {
+  } else {
     mac = hexArr.slice(9, 15).join(':')
   }
   return mac ? mac.toUpperCase() : ''
@@ -137,27 +146,24 @@ function onScanLock() {
     // 允许从相机和相册扫码
     if (initLockId.value) {
       getBluetoothBaseInfoById(initLockId.value)
-    }
-    else {
+    } else {
       uni.scanCode({
         scanType: ['qrCode'],
         success(res) {
-          console.log('条码内容：' + res.result)
+          console.log(`条码内容：${res.result}`)
           let codeResult = ''
           if (redUtil.isLink(res.result)) {
             codeResult = JSON.parse(getQueryString(res.result, 'initLockData') || '{}')
-            console.log('条码内容1：' + codeResult)
-          }
-          else {
+            console.log(`条码内容1：${codeResult}`)
+          } else {
             codeResult = res.result
-            console.log('条码内容2：' + codeResult)
+            console.log(`条码内容2：${codeResult}`)
           }
           getBluetoothBaseInfoById(codeResult)
         },
       })
     }
-  }
-  else {
+  } else {
     uni.showToast({
       title: '请打开蓝牙或将蓝牙权限设置为允许',
       icon: 'none',
@@ -180,8 +186,7 @@ function getBluetoothBaseInfoById(barcode: string) {
             title: '该锁需要答题开锁',
             icon: 'none',
           })
-        }
-        else {
+        } else {
           /// 开始搜索
           startBluetoothDevicesDiscovery(response)
         }
@@ -196,8 +201,7 @@ function getBluetoothBaseInfoById(barcode: string) {
       .finally(() => {
         uni.hideLoading()
       })
-  }
-  else {
+  } else {
     uni.showToast({
       title: '请扫正确的智能锁二维码',
       icon: 'none',
@@ -215,8 +219,7 @@ function startBluetoothDevicesDiscovery(response: any) {
     const items = response
     if (items.isInstructClosed && items.isInstructClosed === '1') {
       isInstructClosed.value = true
-    }
-    else {
+    } else {
       isInstructClosed.value = false
     }
     blueType.value = items.blueType
@@ -225,8 +228,7 @@ function startBluetoothDevicesDiscovery(response: any) {
       console.log(passWord.value, '开锁密码')
       secretKey.value = items.secretKey.split(',').map((e: string) => Number(e))
       console.log(secretKey.value, '密钥')
-    }
-    else if (blueType.value === '2') {
+    } else if (blueType.value === '2') {
       console.log(items, '红色')
       passWord.value = items.password
       secretKey.value = items.secretKey
@@ -260,10 +262,11 @@ function startBluetoothDevicesDiscovery(response: any) {
 
                   seriesNum.value = broadcast.substring(8, 12)
 
-                  const mic = randomVal.value + '000000000000000000000000'
+                  const mic = `${randomVal.value}000000000000000000000000`
 
                   const ecbEncryptVal = redAes.bytes_to_hex(redAes.AES_ECB.encrypt(
-                    redAes.hex_to_bytes(mic), redAes.hex_to_bytes(secretKey.value as string),
+                    redAes.hex_to_bytes(mic),
+                    redAes.hex_to_bytes(secretKey.value as string),
                   ))
 
                   nonce.value = getNonceFromEncryptVal(ecbEncryptVal)
@@ -278,8 +281,7 @@ function startBluetoothDevicesDiscovery(response: any) {
         // uni.hideLoading();
       },
     })
-  }
-  else {
+  } else {
     if (response && response.message && response.message.length > 7) {
       uni.hideLoading()
       uni.showModal({
@@ -288,8 +290,7 @@ function startBluetoothDevicesDiscovery(response: any) {
         confirmText: '确定',
         showCancel: false,
       })
-    }
-    else {
+    } else {
       uni.showToast({
         title: `${response?.message || '获取设备信息失败'}`,
         icon: 'none',
@@ -315,8 +316,7 @@ function createBLEConnect() {
         doCreateBLEConnect()
       },
     })
-  }
-  else {
+  } else {
     doCreateBLEConnect()
   }
 }
@@ -373,8 +373,7 @@ function getBLEDeviceServices() {
           const primaryService = res.services.find((item: any) => item.uuid.includes('0000FEE7') && item.isPrimary)
           blueServiceId.value = primaryService.uuid
           getBLEDeviceCharacteristics(primaryService.uuid)
-        }
-        else if (blueType.value === '2') {
+        } else if (blueType.value === '2') {
           blueServiceId.value = '0000CCD0-0000-1000-8000-00805F9B34FB'
           uni.getBLEDeviceCharacteristics({
             deviceId: lockDeviceId.value,
@@ -390,8 +389,7 @@ function getBLEDeviceServices() {
             },
           })
         }
-      }
-      else {
+      } else {
         getBLEDeviceServices()
       }
     },
@@ -431,8 +429,7 @@ function getBLEDeviceCharacteristics(serviceId: string) {
                   if (token_datas && token_datas[0] === 6 && token_datas[1] === 2) {
                     tokenDatas.value = Array.from(token_datas)
                     getPower()
-                  }
-                  else if (token_datas && token_datas[0] === 2 && token_datas[1] === 2 && token_datas[2] === 1) {
+                  } else if (token_datas && token_datas[0] === 2 && token_datas[1] === 2 && token_datas[2] === 1) {
                     /// 查询电量
                     isConnect.value = true
                     uni.showToast({
@@ -443,8 +440,7 @@ function getBLEDeviceCharacteristics(serviceId: string) {
                     power.value = token_datas[3]
                     lockPower.value = `${token_datas[3]}%`
                     updateElectQuantityToServer(power.value.toString())
-                  }
-                  else if (token_datas && token_datas[0] === 5 && token_datas[1] === 2 && token_datas[2] === 1 && token_datas[3] === 0) {
+                  } else if (token_datas && token_datas[0] === 5 && token_datas[1] === 2 && token_datas[2] === 1 && token_datas[3] === 0) {
                     /// 开锁
                     if (!isInstructClosed.value) {
                       closeBLEConnect()
@@ -454,8 +450,7 @@ function getBLEDeviceCharacteristics(serviceId: string) {
                         })
                       }
                     }
-                  }
-                  else if (token_datas && token_datas[0] === 5 && token_datas[1] === 14 && token_datas[2] === 1 && isInstructClosed.value) {
+                  } else if (token_datas && token_datas[0] === 5 && token_datas[1] === 14 && token_datas[2] === 1 && isInstructClosed.value) {
                     /// 关锁
                     closeBLEConnect()
                     if (initLockId.value && eventChannel.value) {
@@ -463,8 +458,7 @@ function getBLEDeviceCharacteristics(serviceId: string) {
                         data: initLockId.value,
                       })
                     }
-                  }
-                  else if (token_datas && token_datas[0] === 5 && token_datas[1] === 8 && token_datas[2] === 1 && isInstructClosed.value) {
+                  } else if (token_datas && token_datas[0] === 5 && token_datas[1] === 8 && token_datas[2] === 1 && isInstructClosed.value) {
                     console.log(token_datas)
                   }
                 })
@@ -559,16 +553,14 @@ function onCloseLock() {
     datas.push(0, 0, 0, 0, 0, 0, 0, 0)
     writeBLECharacteristicValue(encrypts(datas, secretKey.value as number[]).buffer)
     addUseRecordsToServer(0)
-  }
-  else if (blueType.value === '2' && lockDeviceId.value) {
+  } else if (blueType.value === '2' && lockDeviceId.value) {
     uni.showLoading({
       title: '关锁中...',
     })
     const timer = setInterval(() => {
       readRedLockInfo('lockStatus', timer)
     }, 1000)
-  }
-  else {
+  } else {
     uni.showToast({
       title: '请扫码连接智能锁',
       icon: 'none',
@@ -597,27 +589,22 @@ function onLockOpen() {
           if (res.confirm) {
             if (blueType.value === '3' && isInstructClosed.value) {
               startOpenLock(true)
-            }
-            else {
+            } else {
               startOpenLock()
             }
-          }
-          else if (res.cancel) {
+          } else if (res.cancel) {
             closeBLEConnect()
           }
         },
       })
-    }
-    else {
+    } else {
       if (blueType.value === '3' && isInstructClosed.value) {
         startOpenLock(true)
-      }
-      else {
+      } else {
         startOpenLock()
       }
     }
-  }
-  else if (blueType.value === '2' && lockDeviceId.value) {
+  } else if (blueType.value === '2' && lockDeviceId.value) {
     if (power.value < 10) {
       uni.showModal({
         title: '提示',
@@ -625,18 +612,15 @@ function onLockOpen() {
         success(res) {
           if (res.confirm) {
             startRedOpenLock()
-          }
-          else if (res.cancel) {
+          } else if (res.cancel) {
             closeBLEConnect()
           }
         },
       })
-    }
-    else {
+    } else {
       startRedOpenLock()
     }
-  }
-  else {
+  } else {
     uni.showToast({
       title: '请扫码连接智能锁!',
       icon: 'none',
@@ -661,15 +645,13 @@ function startOpenLock(isCloseLock?: boolean) {
     if (isCloseLock) {
       datas.push(0x5A)
       datas.push(0x78)
-    }
-    else {
+    } else {
       datas.push(0, 0)
     }
     datas.push(0)
     writeBLECharacteristicValue(encrypts(datas, secretKey.value as number[]).buffer)
     addUseRecordsToServer(1)
-  }
-  else {
+  } else {
     uni.showToast({
       title: '请扫码连接智能锁',
       icon: 'none',
@@ -781,8 +763,7 @@ function readRedLockInfo(readType: string, timer?: any) {
           redAes.hex_to_bytes(initHeader),
           4,
         ))
-      }
-      catch (err) {
+      } catch (err) {
         console.log(err)
       }
       if (!decryptVal) {
@@ -792,8 +773,7 @@ function readRedLockInfo(readType: string, timer?: any) {
         power.value = Number.parseInt(decryptVal.substring(8, 10), 16)
         lockPower.value = `${power.value}%`
         updateElectQuantityToServer(power.value.toString())
-      }
-      else if (readType === 'lockStatus') {
+      } else if (readType === 'lockStatus') {
         const lockStatus = Number.parseInt(decryptVal.substring(6, 8), 16)
         console.log(lockStatus, '锁具状态')
         if (lockStatus === 100) {
@@ -820,8 +800,7 @@ function getNonceFromEncryptVal(ecbEncVal: string) {
   if (ecbEncVal) {
     if (ecbEncVal.length !== 32) {
       return null
-    }
-    else {
+    } else {
       const num1 = ecbEncVal.substring(16, 18)
       const num2 = ecbEncVal.substring(14, 16)
       const num3 = ecbEncVal.substring(22, 24)
@@ -836,8 +815,7 @@ function getNonceFromEncryptVal(ecbEncVal: string) {
       const num12 = ecbEncVal.substring(18, 20)
       return num1 + num2 + num3 + num4 + num5 + num6 + num7 + num8 + num9 + num10 + num11 + num12
     }
-  }
-  else {
+  } else {
     return null
   }
 }
@@ -888,15 +866,13 @@ function initBlueAdapter() {
               }
             },
           })
-        }
-        else if (res.errno === 1500102) {
+        } else if (res.errno === 1500102) {
           uni.showToast({
             title: '请打开手机蓝牙',
             icon: 'none',
           })
           isblueScan.value = false
-        }
-        else {
+        } else {
           uni.showToast({
             title: `蓝牙不可用${res.errMsg}`,
             icon: 'none',
@@ -908,8 +884,7 @@ function initBlueAdapter() {
           console.log('状态', res)
           if (res.available) {
             isblueScan.value = true
-          }
-          else {
+          } else {
             isblueScan.value = false
           }
           console.log(isblueScan.value)
@@ -928,12 +903,12 @@ onLoad((option) => {
     eventChannel.value = (proxy as any).getOpenerEventChannel()
   }
   initValue()
-  
+
   // 优先从直接参数获取 initLockId
   if (option && option.initLockId) {
     initLockId.value = option.initLockId as string
   }
-  
+
   // 从 query string 中获取参数（兼容 URL 参数传递方式）
   if (option && option.q) {
     const query = decodeURIComponent(option.q as string)
@@ -944,7 +919,7 @@ onLoad((option) => {
       initLockId.value = initLockIdParam
     }
   }
-  
+
   // 如果通过 URL 参数传递（非 query string），直接从 option 中获取
   if (!initLockId.value && option) {
     // 尝试从 option 的所有键中查找 initLockId
@@ -954,7 +929,7 @@ onLoad((option) => {
       }
     })
   }
-  
+
   if (option && option.toHome) {
     toHome.value = true
   }
@@ -1069,4 +1044,3 @@ onUnload(() => {
   }
 }
 </style>
-

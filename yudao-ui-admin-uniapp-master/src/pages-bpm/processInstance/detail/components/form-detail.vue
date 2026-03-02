@@ -300,7 +300,7 @@ function isEditable(field: any) {
 /** 只读时的展示值（必须用 .value 读取 ref 内的 formData，否则取不到已提交的表单数据） */
 function getFieldDisplayValue(field: any) {
   const val = formPreview.value.formData[field.prop] ?? field.value
-  
+
   // 开锁组件特殊处理：显示开锁状态或锁ID
   if (isLockField(field)) {
     if (!val || val === '') {
@@ -312,7 +312,7 @@ function getFieldDisplayValue(field: any) {
     }
     return val === '已开锁' ? '已开锁' : (val || '')
   }
-  
+
   if (isApiSelectField(field)) {
     const opts = apiSelectOptions.value[field.prop] || field.options || []
     if (Array.isArray(val)) {
@@ -341,16 +341,16 @@ function apiSelectColumns(field: any) {
   return selectColumns(field)
 }
 
-/** 从接口返回项中解析显示文案（兼容 teamName、electricRoomName、roomName、staffName、name、nickname、label、text 等） */
+/** 从接口返回项中解析显示文案（兼容 internalCode、teamName、electricRoomName、roomName、staffName、name、nickname、label、text 等） */
 function getItemLabel(item: any, labelField: string): string {
-  const v = item[labelField] ?? item.teamName ?? item.electricRoomName ?? item.roomName ?? item.staffName ?? item.name ?? item.nickname ?? item.label ?? item.text
+  const v = item[labelField] ?? item.internalCode ?? item.teamName ?? item.electricRoomName ?? item.roomName ?? item.staffName ?? item.name ?? item.nickname ?? item.label ?? item.text
   return v != null ? String(v) : ''
 }
 
-/** 从接口返回项中解析选项值（兼容 teamAccount、electricRoomId、roomId、staffId、id、value 等） */
+/** 从接口返回项中解析选项值（兼容 internalCode、teamAccount、electricRoomId、roomId、staffId、id、value 等） */
 function getItemValue(item: any, valueField: string): any {
   if (item[valueField] !== undefined && item[valueField] !== null) return item[valueField]
-  return item.teamAccount ?? item.electricRoomId ?? item.roomId ?? item.staffId ?? item.id ?? item.value
+  return item.internalCode ?? item.teamAccount ?? item.electricRoomId ?? item.roomId ?? item.staffId ?? item.id ?? item.value
 }
 
 /**
@@ -421,20 +421,20 @@ function handleLockOpen(field: any) {
     toast.show('字段配置错误')
     return
   }
-  
+
   // 构建跳转参数
   const params: Record<string, any> = {}
-  
+
   // 传递字段信息，用于开锁页面识别
-  params.fieldProp = field.prop
-  
+    params.fieldProp = field.prop
+
   // 如果有初始锁ID（从表单数据中获取），可以传递
   const currentLockId = formPreview.value.formData[field.prop]
   if (currentLockId && typeof currentLockId === 'string' && currentLockId.trim()) {
     // 如果当前值已经是锁ID格式（如 blueLock,xxx 或纯ID），直接传递
     params.initLockId = currentLockId.trim()
   }
-  
+
   // 构建URL
   let url = '/pages-lock/lock/blue-lock'
   const query = Object.keys(params)
@@ -443,7 +443,7 @@ function handleLockOpen(field: any) {
   if (query) {
     url += `?${query}`
   }
-  
+
   // 跳转到开锁页面，使用 eventChannel 监听事件
   uni.navigateTo({
     url,
@@ -466,7 +466,7 @@ function handleLockOpen(field: any) {
             const saveLockInfo = field.props?.saveLockInfo !== false
             lockResult = saveLockInfo ? '已开锁' : '已开锁'
           }
-          
+
           formPreview.value.formData[field.prop] = lockResult
           toast.show('开锁成功')
         }

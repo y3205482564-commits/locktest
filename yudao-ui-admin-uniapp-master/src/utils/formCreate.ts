@@ -111,7 +111,7 @@ export function setConfAndFields2(formData: any, conf: any, fields: any, formVar
  */
 export function buildFormValues(fields: any[], formVariables: any) {
   const values: any = {}
-  
+
   if (Array.isArray(fields) && formVariables) {
     fields.forEach((field: any) => {
       if (field.prop && formVariables[field.prop] !== undefined) {
@@ -119,7 +119,7 @@ export function buildFormValues(fields: any[], formVariables: any) {
       }
     })
   }
-  
+
   return values
 }
 
@@ -134,13 +134,13 @@ export function formatFieldValue(field: any, value: any) {
     // 显示字段的默认值，如果没有默认值则显示空字符串
     return field.defaultValue !== undefined ? field.defaultValue : ''
   }
-  
+
   // 处理选择框、单选（设计器可能用 label 或 text；value 与 option 可能数字/字符串混用，用宽松比较）
   if ((field.type === 'select' || field.type === 'radio') && field.options) {
     const option = field.options.find((opt: any) => opt.value == value || String(opt.value) === String(value))
     return option ? (option.label ?? option.text ?? String(value)) : value
   }
-  
+
   // 处理日期类型（含 el-date-picker / el-datetime-picker，与 PC 一致）
   const dateType = (field.type ?? '').toLowerCase()
   if (dateType === 'date' || dateType === 'datetime' || dateType === 'el-date-picker' || dateType === 'el-datetime-picker') {
@@ -158,7 +158,7 @@ export function formatFieldValue(field: any, value: any) {
       second: '2-digit'
     })
   }
-  
+
   // 处理数组类型：多选框、文件/图片上传等
   if (Array.isArray(value)) {
     if (field.options && value.length > 0) {
@@ -178,7 +178,7 @@ export function formatFieldValue(field: any, value: any) {
     }).filter(Boolean)
     return parts.length > 0 ? parts.join('，') : ''
   }
-  
+
   return value === undefined || value === null ? '' : value
 }
 

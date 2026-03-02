@@ -57,6 +57,7 @@
 
 <script lang="ts" setup>
 import type { FormInstance } from 'wot-design-uni/components/wd-form/types'
+import { onLoad } from '@dcloudio/uni-app'
 import { computed, onMounted, reactive, ref } from 'vue'
 import { useToast } from 'wot-design-uni'
 import { approveTask, rejectTask } from '@/api/bpm/task'
@@ -172,6 +173,16 @@ onMounted(() => {
   if (!props.taskId || !props.processInstanceId) {
     toast.show('参数错误')
     return
+  }
+  // 批量通过跳转时可能带 reason 参数，预填审批意见
+  const pages = getCurrentPages()
+  const page = pages[pages.length - 1] as any
+  if (page?.options?.reason != null) {
+    try {
+      formData.reason = decodeURIComponent(page.options.reason)
+    } catch (_) {
+      formData.reason = page.options.reason || ''
+    }
   }
   // 仅「同意」时展示节点/办理表单（与 PC 端点击「通过」后弹窗内的表单一致）
   if (isPass.value) {

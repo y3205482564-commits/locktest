@@ -46,4 +46,3 @@ export function addUseRecords(data: UseRecordReq) {
 export function updateElectQuantity(data: ElectQuantityReq) {
   return http.post<void>(`${baseUrl}/updateElectQuantity`, data)
 }
-

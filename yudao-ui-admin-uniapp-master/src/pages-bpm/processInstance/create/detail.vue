@@ -18,14 +18,22 @@
         <view class="text-28rpx font-bold mb-20rpx text-[#333]">流程：{{ processDefinition?.name }}</view>
         <wd-divider class="my-20rpx" />
 
-        <!-- 表单渲染区域 -->
-        <view v-if="formConfig.rule.length > 0">
-          <!-- TODO: 实现表单渲染 -->
-          <view class="mb-30rpx">
-            <text class="text-26rpx text-[#666]">表单渲染功能开发中...</text>
+        <!-- 审批详情功能框：与审批详情页一致的表单展示/编辑，按权限可编辑 -->
+        <view v-if="processDefinitionForForm" class="mb-30rpx rounded-16rpx overflow-hidden bg-white">
+          <view class="px-24rpx pt-24rpx pb-12rpx">
+            <text class="text-28rpx font-bold text-[#333]">表单填写</text>
+          </view>
+          <view class="px-24rpx pb-24rpx">
+            <FormDetail
+              ref="formDetailRef"
+              :process-definition="processDefinitionForForm"
+              :process-instance="processInstanceForForm"
+              :activity-nodes="activityNodes"
+              :form-fields-permission="formFieldsPermission"
+            />
           </view>
         </view>
-        
+
         <!-- 审批节点预览 -->
         <view class="mt-40rpx">
           <view class="text-28rpx font-bold mb-20rpx text-[#333]">审批流程</view>
@@ -60,22 +68,51 @@ import type { ProcessDefinition } from '@/api/bpm/definition'
 import { onLoad } from '@dcloudio/uni-app'
 import { ref } from 'vue'
 import { useToast } from 'wot-design-uni'
+import { BpmModelFormType } from '@/utils/constants'
+import { FieldPermissionType } from '@/utils/constants'
 import * as ProcessInstanceApi from '@/api/bpm/processInstance'
 import * as DefinitionApi from '@/api/bpm/definition'
+import FormDetail from '../detail/components/form-detail.vue'
 
 const toast = useToast()
 
 const loading = ref(true)
 const submitting = ref(false)
 const processDefinition = ref<ProcessDefinition | null>(null)
-const formConfig = ref({
-  rule: [],
-  option: {},
-  value: {}
-})
 const activityNodes = ref<any[]>([])
 const bpmnXML = ref<string | null>(null)
 const simpleJson = ref<string | undefined>(null)
+
+/** 供 FormDetail 使用：流程定义（表单类型、conf、fields） */
+const processDefinitionForForm = ref<{
+  formType: number
+  formConf: string
+  formFields: string | string[]
+} | null>(null)
+/** 发起时无实例数据，表单值为空，由用户填写 */
+const processInstanceForForm = ref<{ formVariables: Record<string, any> }>({ formVariables: {} })
+/** 表单字段权限：来自审批详情接口；发起时若无则默认全部可编辑 */
+const formFieldsPermission = ref<Record<string, string>>({})
+
+const formDetailRef = ref<InstanceType<typeof FormDetail>>()
+
+/** 从 formFields 解析出所有字段 prop，并设为可编辑（发起时后端未返回权限时的兜底） */
+function buildAllWritePermission(formFields: string | string[] | undefined): Record<string, string> {
+  if (!formFields) return {}
+  try {
+    const arr = typeof formFields === 'string' ? JSON.parse(formFields) : formFields
+    const list = Array.isArray(arr) ? arr : []
+    const perm: Record<string, string> = {}
+    list.forEach((f: any) => {
+      const field = typeof f === 'string' ? JSON.parse(f) : f
+      const prop = field?.prop ?? field?.field
+      if (prop) perm[prop] = FieldPermissionType.WRITE
+    })
+    return perm
+  } catch {
+    return {}
+  }
+}
 
 // 获取路由参数
 const onLoadCallback = (options: any) => {
@@ -97,21 +134,37 @@ async function loadProcessInfo(processDefinitionId: string) {
     // 1. 获取流程定义详情
     const definitionDetail = await DefinitionApi.getProcessDefinition(processDefinitionId)
     processDefinition.value = definitionDetail
-    
-    // 2. 获取表单配置
-    if (definitionDetail.formConf && definitionDetail.formFields) {
-      // TODO: 解析表单配置，实际项目中需要根据表单配置渲染表单
-      formConfig.value = {
-        rule: [], // 实际项目中需要解析表单字段
-        option: JSON.parse(definitionDetail.formConf || '{}'),
-        value: {}
+
+    // 2. 获取审批详情（发起人节点）：用于审批节点列表 + 表单字段权限）
+    const data = await ProcessInstanceApi.getApprovalDetail({
+      processDefinitionId,
+      activityId: 'StartUserNode',
+      processVariablesStr: JSON.stringify({})
+    })
+
+    if (data) {
+      activityNodes.value = data.activityNodes || []
+      // 使用接口返回的字段权限；若无则发起时默认全部可编辑
+      if (data.formFieldsPermission && Object.keys(data.formFieldsPermission).length > 0) {
+        formFieldsPermission.value = data.formFieldsPermission
+      } else {
+        formFieldsPermission.value = buildAllWritePermission(definitionDetail.formFields)
       }
     }
-    
-    // 3. 获取审批节点信息
-    await getApprovalDetail(processDefinitionId)
-    
-    // 4. 获取流程图数据
+
+    // 3. 流程表单：与审批详情页一致的「审批详情」展示与编辑
+    if (definitionDetail.formType === BpmModelFormType.NORMAL && definitionDetail.formConf && definitionDetail.formFields) {
+      processDefinitionForForm.value = {
+        formType: BpmModelFormType.NORMAL,
+        formConf: definitionDetail.formConf,
+        formFields: definitionDetail.formFields
+      }
+      processInstanceForForm.value = { formVariables: {} }
+    } else {
+      processDefinitionForForm.value = null
+    }
+
+    // 4. 流程图数据
     bpmnXML.value = definitionDetail.bpmnXml
     simpleJson.value = definitionDetail.simpleModel
   } catch (error) {
@@ -119,23 +172,6 @@ async function loadProcessInfo(processDefinitionId: string) {
     toast.show('加载流程信息失败')
   } finally {
     loading.value = false
-  }
-}
-
-/** 获取审批详情 */
-async function getApprovalDetail(processDefinitionId: string) {
-  try {
-    const data = await ProcessInstanceApi.getApprovalDetail({
-      processDefinitionId,
-      activityId: 'StartUserNode', // 发起人节点ID
-      processVariablesStr: JSON.stringify({})
-    })
-    
-    if (data) {
-      activityNodes.value = data.activityNodes || []
-    }
-  } catch (error) {
-    console.error('获取审批详情失败:', error)
   }
 }
 
@@ -149,21 +185,18 @@ async function handleSubmit() {
   if (!processDefinition.value) {
     return
   }
-  
+
   submitting.value = true
   try {
-    // TODO: 实际项目中需要进行表单验证
-    
-    // 提交流程实例
+    const variables = formDetailRef.value?.getFormVariables?.() ?? {}
     await ProcessInstanceApi.createProcessInstance({
       processDefinitionId: processDefinition.value.id,
-      variables: formConfig.value.value,
+      variables,
       startUserSelectAssignees: {}
     })
-    
+
     toast.show('发起流程成功')
-    
-    // 返回流程列表页
+
     uni.redirectTo({
       url: '/pages-bpm/processInstance/list/index'
     })
