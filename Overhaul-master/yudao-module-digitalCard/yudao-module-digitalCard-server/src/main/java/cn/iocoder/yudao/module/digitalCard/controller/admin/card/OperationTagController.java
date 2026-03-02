@@ -1,18 +1,19 @@
 package cn.iocoder.yudao.module.digitalCard.controller.admin.card;
 
 import cn.iocoder.yudao.framework.common.pojo.CommonResult;
+import cn.iocoder.yudao.module.digitalCard.model.dto.card.OperationTagRecordSaveReqVO;
 import cn.iocoder.yudao.module.digitalCard.model.vo.card.OperationTagVO;
 import cn.iocoder.yudao.module.digitalCard.model.vo.card.SimpleOperationTagVO;
 import cn.iocoder.yudao.module.digitalCard.service.OperationTagService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
+
+import static cn.iocoder.yudao.framework.common.pojo.CommonResult.success;
 
 /**
  * 操作标签控制器
@@ -116,4 +117,18 @@ public class OperationTagController {
         List<OperationTagVO> list = operationTagService.getOperationTagListByStationRoomId(stationRoomId);
         return CommonResult.success(list);
     }
+
+
+    //通过id修改操作牌的workCount字段，workCount减一
+    @GetMapping("/update-work-count/{id}")
+    @Operation(summary = "通过id修改操作牌的workCount字段，workCount减一", description = "只返回未删除的指定id操作牌，无数据则返回空列表")
+    public CommonResult<Boolean> updateWorkCountById(@Parameter(description = "id", required = true) @PathVariable Long id // 路径参数，必传
+    ) {
+        operationTagService.updateWorkCountById(id);
+        return success(true);
+    }
+
+
+
+
 }

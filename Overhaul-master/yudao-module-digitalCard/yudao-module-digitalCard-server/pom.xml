@@ -13,8 +13,8 @@
 
     <name>${project.artifactId}</name>
     <description>
-        system 模块下，我们放通用业务，支撑上层的核心业务。
-        例如说：用户、部门、权限、数据字典等等
+        digitalCard 模块下，属于新模块
+        包含：操作牌、站室等
     </description>
 
     <dependencies>
@@ -35,6 +35,17 @@
             <artifactId>yudao-module-infra-api</artifactId>
             <version>${revision}</version>
         </dependency>
+        <dependency>
+            <groupId>cn.iocoder.cloud</groupId>
+            <artifactId>yudao-module-digitalCard-api</artifactId>
+            <version>${revision}</version>
+        </dependency>
+        <dependency>
+            <groupId>cn.iocoder.cloud</groupId>
+            <artifactId>yudao-module-bpm-api</artifactId>
+            <version>${revision}</version>
+        </dependency>
+
 
         <!-- 业务组件 -->
         <dependency>
@@ -111,6 +122,7 @@
         </dependency>
 
 
+
         <!-- 工具类相关 -->
         <dependency>
             <groupId>cn.iocoder.cloud</groupId>
@@ -158,6 +170,20 @@
             <groupId>com.anji-plus</groupId>
             <artifactId>captcha-spring-boot-starter</artifactId> <!-- 验证码，一般用于登录使用 -->
         </dependency>
+
+
+        <dependency>
+            <groupId>net.java.dev.jna</groupId>
+            <artifactId>jna</artifactId>
+            <version>5.13.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>net.java.dev.jna</groupId>
+            <artifactId>jna-platform</artifactId>
+            <version>5.13.0</version>
+        </dependency>
+
 
     </dependencies>
 

@@ -1,15 +1,22 @@
 package cn.iocoder.yudao.module.digitalCard.framework.rpc.config;
 
+import cn.iocoder.yudao.module.bpm.api.task.BpmProcessInstanceApi;
+import cn.iocoder.yudao.module.bpm.api.task.BpmTaskApi;
+import cn.iocoder.yudao.module.system.api.dept.DeptApi;
+import cn.iocoder.yudao.module.system.api.dept.PostApi;
+import cn.iocoder.yudao.module.system.api.dict.DictDataApi;
+import cn.iocoder.yudao.module.system.api.permission.PermissionApi;
+import cn.iocoder.yudao.module.system.api.permission.RoleApi;
+import cn.iocoder.yudao.module.system.api.sms.SmsSendApi;
 import cn.iocoder.yudao.module.system.api.user.AdminUserApi;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.Configuration;
 
-/**
- * RPC 配置类
- * 用于启用 Feign 客户端
- */
 @Configuration(value = "digitalCardRpcConfiguration", proxyBeanMethods = false)
-@EnableFeignClients(clients = {AdminUserApi.class})
+@EnableFeignClients(clients = {RoleApi.class, DeptApi.class, PostApi.class, AdminUserApi.class, SmsSendApi.class, DictDataApi.class,
+        PermissionApi.class, BpmTaskApi.class, BpmProcessInstanceApi.class})
 public class RpcConfiguration {
-}
 
+
+
+}

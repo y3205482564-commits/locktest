@@ -47,4 +47,7 @@ public interface OperationTagService extends IService<OperationTag> {
      */
     List<OperationTagVO> getOperationTagListByStationRoomId(Long stationRoomId);
 
+
+    void updateWorkCountById(Long id);
+
 }

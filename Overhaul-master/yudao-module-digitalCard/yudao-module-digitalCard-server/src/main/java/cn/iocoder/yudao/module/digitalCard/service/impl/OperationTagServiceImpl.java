@@ -90,6 +90,19 @@ public class OperationTagServiceImpl extends ServiceImpl<OperationTagMapper, Ope
                 .map(tag -> BeanUtil.copyProperties(tag, OperationTagVO.class))
                 .collect(Collectors.toList());
     }
+
+
+    /**
+     * 通过id修改操作牌的workCount字段，workCount减一
+     *
+     * @param id
+     */
+    public void updateWorkCountById(Long id) {
+        lambdaUpdate()
+                .setSql("work_count = work_count - 1")
+                .eq(OperationTag::getId, id)
+                .update();
+    }
 }
 
 

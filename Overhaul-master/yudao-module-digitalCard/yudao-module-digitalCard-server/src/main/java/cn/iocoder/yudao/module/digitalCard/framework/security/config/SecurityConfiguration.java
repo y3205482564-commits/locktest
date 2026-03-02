@@ -43,7 +43,7 @@ public class SecurityConfiguration {
     /**
      * 注册 AppApiUserTypeFilter，确保在 Spring Security FilterChain 之前执行
      * 用于修复 /app-api/digitalCard/** 路径的用户类型识别问题
-     * 
+     *
      * 注意：使用负数 Order 确保在 Spring Security 的 DelegatingFilterProxy (Order=0) 之前执行
      */
     @Bean
